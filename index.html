@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NinjaMan</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .row {
+            line-height: 0;
+        }
+        
+        .wall {
+            background-color: blue;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+        }
+        
+        .sushi {
+            background-color: black;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+            background-image: url('ninjaman/sushi.png');
+            background-size: contain;
+        }
+        
+        .blank {
+            background-color: black;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+        }
+        
+        .onigiri {
+            background-color: black;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+            background-image: url('ninjaman/onigiri.png');
+            background-size: contain;
+        }
+        
+        #ninjaman {
+            background-color: black;
+            height: 40px;
+            width: 40px;
+            display: inline-block;
+            background-image: url('ninjaman/ninja.gif');
+            background-size: contain;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="world">
+        <!-- <div class="row">
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="blank"></div>
+            <div class="sushi"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="blank"></div>
+            <div class="wall"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="sushi"></div>
+            <div class="blank"></div>
+            <div class="sushi"></div>
+            <div class="wall"></div>
+        </div>
+        <div class="row">
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+            <div class="wall"></div>
+        </div> -->
+    </div>
+    <div id="ninjaman"></div>
+</body>
+<script type="text/javascript">
+    var world = [];
+
+    function randomWorld() {
+
+        for (let i = 0; i < 15; i++) {
+            // empty array to put the random value 0-3
+            var column = []
+            for (let j = 0; j < 15; j++) {
+                // if it is the corner div put 1 only to make a wall so ninja can't get out of container
+                if (i === 0 || j === 0 || i === 14 || j === 14)
+                    column.push(0)
+                    // to not generate the wall to so ninja can get to any sushi or onigiri
+                else if (i === 1 || j === 1 || i === 13 || j === 13) {
+                    var randomNum = Math.floor((Math.random() * 3) + 1)
+                    column.push(randomNum);
+                } else {
+                    var randomNum = Math.floor((Math.random() * 4))
+                    column.push(randomNum);
+                }
+            }
+            world.push(column);
+        }
+    }
+    randomWorld();
+    var worldDict = {
+        0: 'wall',
+        1: 'blank',
+        2: 'sushi',
+        3: 'onigiri'
+    }
+
+    function drawWorld() {
+        output = "";
+        for (var row = 0; row < world.length; row++) {
+            output += "<div class='row'>"
+            for (var x = 0; x < world[row].length; x++) {
+                output += "<div class='" + worldDict[world[row][x]] + "'></div>"
+            }
+            output += "</div>"
+        }
+        document.getElementById('world').innerHTML = output;
+    }
+    drawWorld();
+    // function to move ninja down
+    // first we add event listenner on keydown
+    // I will use same logic from the last challenge if user press key down up left right
+    // I will at 40 px to it 
+    // the condition will be user can press keydown only if the class is not wall
+    // indide if condition I will check if the class is sushi I will change to blank
+    // it mean ninja ate sushi 
+    // do nothing if it is blank div
+    var ninjaMan = {
+        x: 1,
+        y: 1
+    }
+
+    function drawNinjanMan() {
+        world[1][1] = 1;
+        document.getElementById('ninjaman').style.top = ninjaMan.y * 40 + 'px';
+        document.getElementById('ninjaman').style.left = ninjaMan.x * 40 + 'px';
+    }
+    drawNinjanMan();
+    // next challenge
+    // track the score of how many sushi's ninjanMan eats>
+    // sushi = 10pts onigiri = 5 pts
+    var point = 0;
+    document.onkeydown = function(e) {
+        if (e.keyCode === 37) {
+            // world at index [1][0] !== 1 mean not a wall
+            if (world[ninjaMan.y][ninjaMan.x - 1] !== 0)
+                ninjaMan.x--;
+        }
+        if (e.keyCode === 39) {
+            if (world[ninjaMan.y][ninjaMan.x + 1] !== 0)
+                ninjaMan.x++;
+        }
+        if (e.keyCode === 38) {
+            if (world[ninjaMan.y - 1][ninjaMan.x] !== 0)
+                ninjaMan.y--;
+        }
+        if (e.keyCode === 40) {
+            if (world[ninjaMan.y + 1][ninjaMan.x] !== 0)
+                ninjaMan.y++;
+        }
+        if (world[ninjaMan.y][ninjaMan.x] === 2) {
+            point += 10;
+        }
+        if (world[ninjaMan.y][ninjaMan.x] === 3) {
+            point += 5;
+        }
+        world[ninjaMan.y][ninjaMan.x] = 1;
+        console.log(point)
+        drawNinjanMan();
+        drawWorld();
+    }
+
+
+
+    // advance challenge = random world
+
+    // hacker challenge = create ghosts that chase ninjaMan
+</script>
+
+</html>
