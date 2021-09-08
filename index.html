@@ -48,6 +48,14 @@
             background-size: contain;
         }
         
+        .container {
+            background-color: red;
+        }
+        
+        #game-board {
+            display: block;
+        }
+        
         #ninjaman {
             background-color: black;
             height: 40px;
@@ -98,19 +106,20 @@
             font-size: 48px;
             font-weight: 600;
         }
-        
-        #world {
-            position: relative;
-        }
+        /* #world {} */
     </style>
 </head>
 
 <body>
-    <div id="world"></div>
-    <div id="ninjaman"></div>
-    <div id="pinky"></div>
-    <div id="pumpky"></div>
-    <div id="scaredy"></div>
+    <div class='container'>
+        <div id="game-board">
+            <div id="world"></div>
+            <div id="ninjaman"></div>
+            <div id="pinky"></div>
+            <div id="pumpky"></div>
+            <div id="scaredy"></div>
+        </div>
+    </div>
 
     <p id="score">SCORE: <span id="point">0</span></p>
 </body>
@@ -170,17 +179,19 @@
         y: Math.floor(world[0].length / 2) + 1
     }
 
-    // var pumpky = {
-    //     x: Math.floor(world.length / 2),
-    //     y: Math.floor(world[0].length / 2) + 1
-    // }
+    var pumpky = {
+        x: Math.floor(world.length / 2),
+        y: Math.floor(world[0].length / 2) + 1
+    }
 
-    // var scaredy = {
-    //     x: Math.floor(world.length / 2) + 1,
-    //     y: Math.floor(world[0].length / 2) + 1
-    // }
+    var scaredy = {
+        x: Math.floor(world.length / 2) + 1,
+        y: Math.floor(world[0].length / 2) + 1
+    }
     world[ninjaMan.x][ninjaMan.y] = 1;
     world[pinky.x][pinky.y] = 1;
+    world[pumpky.x][pumpky.y] = 1;
+    world[scaredy.x][scaredy.y] = 1;
 
     function drawNinjanMan() {
         document.getElementById('ninjaman').style.top = ninjaMan.y * 40 + 'px';
@@ -188,31 +199,24 @@
     }
 
     function drawPinky() {
-        world[pinky.x][pinky.y] = 1;
         document.getElementById('pinky').style.top = pinky.y * 40 + 'px';
         document.getElementById('pinky').style.left = pinky.x * 40 + 'px';
     }
 
     function drawPumpky() {
-        world[pumpky.x][pumpky.y] = 1;
         document.getElementById('pumpky').style.top = pumpky.y * 40 + 'px';
         document.getElementById('pumpky').style.left = pumpky.x * 40 + 'px';
     }
 
     function drawScaredy() {
-        world[scaredy.x][scaredy.y] = 1;
         document.getElementById('scaredy').style.top = scaredy.y * 40 + 'px';
         document.getElementById('scaredy').style.left = scaredy.x * 40 + 'px';
     }
 
-
-
-    // function moveMonster() {
-    //     var pinkyDirection = monsterDirection();
-    //     if (pinkyDirection)
-    // }
     drawNinjanMan();
     drawPinky();
+    drawPumpky();
+    drawScaredy();
 
     function monsterDirection() {
         var direction = ['up', 'down', 'left', 'right'];
@@ -220,24 +224,47 @@
         return direction[index];
     }
 
-    function movePinky() {
-        var pinkyDirection = monsterDirection();
-        if (pinkyDirection === 'up') {
-            if (world[pinky.y - 1][pinky.x] === 0) return
-            pinky.y--;
-        } else if (pinkyDirection === 'down') {
-            if (world[pinky.y + 1][pinky.x] === 0) return
-            pinky.y++;
+    function moveMonsters(monsterObject) {
+        var monsterObjDirection = monsterDirection();
+        if (monsterObjDirection === 'up' && world[monsterObject.y - 1][monsterObject.x] !== 0) {
+            monsterObject.y--;
+        } else if (monsterObjDirection === 'down' && world[monsterObject.y + 1][monsterObject.x] !== 0) {
+            monsterObject.y++;
+        } else if (monsterObjDirection === 'left' && world[monsterObject.y][monsterObject.x - 1] !== 0) {
+            monsterObject.x--;
+        } else if (monsterObjDirection === 'right' && world[monsterObject.y][monsterObject.x + 1] !== 0) {
+            monsterObject.x++;
         }
-
     }
-    // next challenge
-    // track the score of how many sushi's ninjanMan eats>
-    // sushi = 10pts onigiri = 5 pts
+
+    var interval = setInterval(function() {
+            moveMonsters(pinky);
+            moveMonsters(pumpky);
+            moveMonsters(scaredy);
+            drawPinky();
+            drawPumpky();
+            drawScaredy();
+        }, 150)
+        // next challenge
+        // track the score of how many sushi's ninjanMan eats>
+        // sushi = 10pts onigiri = 5 pts
     var point = 0;
     document.onkeydown = function(e) {
         var pointText = document.getElementById('point');
-
+        if (pinky.y === ninjaMan.y ||
+            pumpky.y === ninjaMan.y ||
+            scaredy.y === ninjaMan.y) {
+            console.log(pinky.y, ":pinky\n", pumpky.y, " : pumpky y\n", scaredy.y, " : scaredy y\n", ninjaMan.y, " : ninja y")
+            gameOver();
+            var gameOverElement = document.getElementById('game-board');
+            gameOverElement.style.display = 'none';
+            var container = document.getElementsByClassName('container');
+            var text = document.createElement("p");
+            var node = document.createTextNode("GAME OVER");
+            text.appendChild(node)
+            container[0].appendChild(text);
+            document.onkeydown = null;
+        }
         if (e.keyCode === 37) {
             // world at index [1][0] !== 1 mean not a wall
             if (world[ninjaMan.y][ninjaMan.x - 1] !== 0)
@@ -267,6 +294,10 @@
         drawWorld();
     }
 
+    function gameOver() {
+        console.log('clear')
+        clearInterval(interval);
+    }
     // hacker challenge = create ghosts that chase ninjaMan
     // create the direction object to track of where the monster start
 </script>
