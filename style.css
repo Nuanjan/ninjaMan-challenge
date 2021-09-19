@@ -1,0 +1,104 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  line-height: 0;
+}
+
+.container p {
+  text-align: center;
+}
+.wall {
+  background-color: blue;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+}
+
+.sushi {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/sushi.png");
+  background-size: contain;
+}
+
+.blank {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+}
+
+.onigiri {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/onigiri.png");
+  background-size: contain;
+}
+
+.container {
+  width: 100%;
+  margin: 0 auto;
+}
+
+#game-board {
+  display: block;
+}
+
+#ninjaman {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/ninja.gif");
+  background-size: contain;
+  position: absolute;
+}
+
+#pinky {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/pinky.gif");
+  background-size: contain;
+  position: absolute;
+}
+
+#pumpky {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/pumpky.gif");
+  background-size: contain;
+  position: absolute;
+}
+
+#scaredy {
+  background-color: black;
+  height: 40px;
+  width: 40px;
+  display: inline-block;
+  background-image: url("ninjaman/scaredy.png");
+  background-size: contain;
+  position: absolute;
+}
+
+#score {
+  font-size: 48px;
+  font-weight: 600;
+  text-align: center;
+}
+
+#score > span {
+  font-size: 48px;
+  font-weight: 600;
+}
